@@ -87,7 +87,7 @@ in your R profile. The above will make the latest package versions from CRAN and
 
 Time-based snapshots can be used for increased reproducibility, especially in environments where the users do not make use of `renv` for fixing their R package versions. By setting a time-based snapshot, any R package installation without a specific package version definition will install the most recent version available at the given snapshot. Such snapshots and their respective URL can be selected by clicking on a calendar date in the Section "Repository URL" of the "Setup" page for CRAN and selecting "Freeze". For the snapshot of Nov 26th, 2021, the URL is "https://packagemanager.rstudio.com/cran/2021-11-26". 
 
-If time-based CRAN snapshots are used, it is advisable to set the dates  to a time when the BioConductor version compatible](https://bioconductor.org/about/release-announcements/#release-versions) with the R version was released to ensure compatibility. 
+If time-based CRAN snapshots are used, it is advisable to set the dates  to a time when the BioConductor version [compatible](https://bioconductor.org/about/release-announcements/#release-versions) with the R version was released to ensure compatibility. 
 
 #### Immutability/Lock of of CRAN Package Data
 
@@ -95,11 +95,11 @@ In addition to plain time-based snapshots, the package data available for a give
 
 #### Use of binary CRAN packages
 
-RSPM only supports binary packages for CRAN. In order to make use of those, the Client OS needs to be set accordingly. In the Setup page for the CRAN Repo the respective URL containing the binaries can be selected in the subsection of "Repository URL` with title "Use source or binary packages". For latest CRAN packages built for "Ubuntu 20.04 LTS (Focal)" this would lead to "https://packagemanager.rstudio.com/cran/\_\_linux__/focal/latest". In many cases however the installation mechanisms `install.packages()` or `renv::install()` auto-detect the existence of binaries and will use those. 
+RSPM only supports binary packages for CRAN. In order to make use of those, the Client OS needs to be set accordingly. In the Setup page for the CRAN Repo the respective URL containing the binaries can be selected in the subsection of "Repository URL" with title "Use source or binary packages". For latest CRAN packages built for "Ubuntu 20.04 LTS (Focal)" this would lead to "https://packagemanager.rstudio.com/cran/__linux__/focal/latest". In many cases however the installation mechanisms `install.packages()` or `renv::install()` auto-detect the existence of binaries and will use those. 
 
 ### Private RSPM
 
-If a private RSPM is used, the largest freedom is possible. In principle, nothing changes from what was described [before](#public-rstudio-package-manager) for public RSPM except that the hostname changes. 
+If a private RSPM is used, the largest freedom is possible. In principle, nothing changes from what was described [before](#public-rspm) for public RSPM except that the hostname changes. 
 
 Additional capabilities come into play via the creation of custom CRAN-like repositories that can mix BioConductor releases with latest or time-based snapshots of CRAN.  
 
@@ -118,7 +118,7 @@ where `hostname-of-private-rspm` corresponds to the DNS name of your local/priva
 * Working with BioConductor packages is possible in general for all scenarios described, e.g. 
    * [BioConductor way](#the-bioconductor-way)
    * [CRAN way](#the-cran-way)
-   * [renv()](#renv)
+   * [renv()](#using-renv)
 * Publishing to RStudio Connect is only possible for the [CRAN way](#the-cran-way) and [renv()](#renv), i.e. when persistently defining the BioConductor repositories in the R profile. 
 * If [RSPM is used](#public-rspm), additionally `Bioc_Mirror` needs to be set and pointed to the respective URL of the `bioconductor` repository
 * For [private RSPM](#private-rspm) and the usage of the "CRAN like" repository that includes both CRAN and BioConductor repos only this single combined repository needs to be defined in the R profile. 
