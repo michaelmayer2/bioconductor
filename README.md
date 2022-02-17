@@ -1,10 +1,16 @@
-# BioConductor repositories 
+# BioConductor
 
-This document summarizes various use cases for working with BioConductor repositories and its packages.
+This document summarises various use cases for working with BioConductor repositories and its packages.
 
 * Installing packages via `BiocManager::install()` and `install.packages()` only
 * Publishing content to RStudio Connect
 * Repeat the same with `renv`
+
+## Introduction
+
+[BioConductor](https://www.bioconductor.org/) is a repository of R packages that facilitates rigorous and reproducible analysis of data from current and emerging biological assays.
+
+In contrast to [CRAN](https://cran.r-project.org) BioConductor delivers releases where a set of packages is published at once while on CRAN packages are added continuously. Any such release of BioConductor is [compatible with a certain version of R](https://www.bioconductor.org/about/release-announcements/). Additionally BioConductor also comes with its own installation tool, `BiocManager::install()`. Both the versioned releases and the different installation mechanism can be challenging, especially in the context of publishing to RStudio Connect. 
 
 
 ## Prerequisites
@@ -19,7 +25,7 @@ This document summarizes various use cases for working with BioConductor reposit
 
 ### Public CRAN and BioConductor repositories
 
-#### The "BioConductor" way
+#### The BioConductor way
 
 As per [BioConductor](https://www.bioconductor.org/install/), any BioConductor **and** CRAN package can be installed via
 
@@ -27,7 +33,9 @@ As per [BioConductor](https://www.bioconductor.org/install/), any BioConductor *
 BiocManager::install("PackageName")
 ```
 
-#### The "CRAN" way
+Publishing Shiny Apps that make use of BioConductor packages to RStudio Connect is not possible for this setup. `BiocManager::install()` temporarily adds the BioConductor repository for the duration of the install process. During the publishing process `rsconnect` no longer has any knowledge about BioConductor. 
+
+#### The CRAN way
 
 `install.packages()` by default is restricted to CRAN repositories only. BioConductor packages can be installed via `install.packages()` when setting
 ```
@@ -35,9 +43,11 @@ options(repos=c(BiocManager::repositories()))
 ```
 in the R profile. Note: The above setting is independent of the R version and will always use the most recent BioConductor release [compatible](https://bioconductor.org/about/release-announcements/#release-versions) with your R Version. Users that want to use a specific BioConductor release need to set this version as `version` parameter in `BiocManager::repositories()`, e.g. `version="3.13"`. 
 
+Publishing Shiny Apps that make use of BioConductor packages to RStudio Connect is perfectly fine for this setup. 
+
 #### Using `renv`
 
-The general workflow is described on the [renv webpage](https://rstudio.github.io/renv/). By default `renv::init()` will only pick up packages from CRAN. In order to make it also use BioConductor packages, you need to add `bioconductor=TRUE` as an parameter, i.e. 
+The general workflow is described on the [renv webpage](https://rstudio.github.io/renv/). By default `renv::init()` will only pick up packages from CRAN. In order to make it also use BioConductor packages, you need to add `bioconductor=TRUE` as a parameter, i.e. 
 
 ```
 renv::init(bioconductor=TRUE)
@@ -45,12 +55,20 @@ renv::init(bioconductor=TRUE)
 
 which will use the most recent BioConductor release [compatible](https://bioconductor.org/about/release-announcements/#release-versions) with your R Version. In case you would like to use a different BioConductor release, replace `TRUE` with the BioConductor version string, e.g. `bioconductor="3.13"`. 
 
-Any `renv` initialized in such a way can be restored with `renv::restore()` and only uses the information in `renv.lock`. Users that are interested in the details will realize that the BioConductor version is defined in `renv.lock`, e.g. 
+Any `renv` initialised in such a way can be restored with `renv::restore()` and only uses the information in `renv.lock`. Users that are interested in the details will realise that the BioConductor version is defined in `renv.lock`, e.g. 
 ```
   "Bioconductor": {
     "Version": "3.14"
   },
 ```
+
+Publishing Shiny Apps that make use of BioConductor packages to RStudio Connect will only work if you again add 
+
+```
+options(repos=c(BiocManager::repositories()))
+```
+
+to your R profile. 
 
 ### Public RSPM
 
@@ -77,7 +95,7 @@ In addition to plain time-based snapshots, the package data available for a give
 
 #### Use of binary CRAN packages
 
-RSPM only supports binary packages for CRAN. In order to make use of those, the Client OS needs to be set accordingly. In the Setup page for the CRAN Repo the respective URL containing the binaries can be selected in the subsection of "Repository URL` with title "Use source or binary packages". For latest CRAN packages built for "Ubuntu 20.04 LTS (Focal)" this would lead to "https://packagemanager.rstudio.com/cran/\_\_linux__/focal/latest". 
+RSPM only supports binary packages for CRAN. In order to make use of those, the Client OS needs to be set accordingly. In the Setup page for the CRAN Repo the respective URL containing the binaries can be selected in the subsection of "Repository URL` with title "Use source or binary packages". For latest CRAN packages built for "Ubuntu 20.04 LTS (Focal)" this would lead to "https://packagemanager.rstudio.com/cran/\_\_linux__/focal/latest". In many cases however the installation mechanisms `install.packages()` or `renv::install()` auto-detect the existence of binaries and will use those. 
 
 ### Private RSPM
 
@@ -85,7 +103,7 @@ If a private RSPM is used, the largest freedom is possible. In principle, nothin
 
 Additional capabilities come into play via the creation of custom CRAN-like repositories that can mix BioConductor releases with latest or time-based snapshots of CRAN.  
 
-Such an approach is described in detail in the [RSPM admin guide](https://docs.rstudio.com/rspm/admin/appendix/source-details/#bioc-cran-like-repo) and in the [Quickstart of the same](https://docs.rstudio.com/rspm/admin/getting-started/configuration/#quickstart-bioconductor-r-repos). The basic idea is to create repo named to the liking of the organisation using the private RSPM (bioconductor-3.11 in the referenced example) and then subscribe the source of the appropriate BioConductor release and a selected CRAN snapshot to this repo (latest CRAN can be subscribed as well but see the comments about [BioConductor-CRAN compatibility](#use-of-time-based-cran-snapshots). Of course additional package sources (e.g. local, git based) can be subscribed to this repo, too. 
+Such an approach is described in detail in the [RSPM admin guide](https://docs.rstudio.com/rspm/admin/appendix/source-details/#bioc-cran-like-repo) and in the [Quickstart of the same](https://docs.rstudio.com/rspm/admin/getting-started/configuration/#quickstart-bioconductor-r-repos). The basic idea is to create repo named to the liking of the organisation using the private RSPM (bioconductor-3.11 in the referenced example) and then subscribe the source of the appropriate BioConductor release and CRAN to this repo. Additional package sources (e.g. local, git based) can be subscribed to this repo, too. The benefit of this solution is that the newly created repo can be used with snapshots. 
 
 Once such a setup is in place, this custom repo only can be set in the repo definition using the same approach as outlined for [public RSPM](#public-rspm) - only `install.packages()` or `renv::install()` can be used. The use of `BiocManager::install()` is no longer needed. 
 
@@ -95,6 +113,13 @@ options(repos=c(pRSPM="https://hostname-of-private-rspm/bioconductor-3.14/latest
 ```
 where `hostname-of-private-rspm` corresponds to the DNS name of your local/private RSPM. 
 
-## Publishing to RStudio Connect
+# Summary
 
-### 
+* Working with BioConductor packages is possible in general for all scenarios described, e.g. 
+   * [BioConductor way](#the-bioconductor-way)
+   * [CRAN way](#the-cran-way)
+   * [renv()](#renv)
+* Publishing to RStudio Connect is only possible for the [CRAN way](#the-cran-way) and [renv()](#renv), i.e. when persistently defining the BioConductor repositories in the R profile. 
+* If [RSPM is used](#public-rspm), additionally `Bioc_Mirror` needs to be set and pointed to the respective URL of the `bioconductor` repository
+* For [private RSPM](#private-rspm) and the usage of the "CRAN like" repository that includes both CRAN and BioConductor repos only this single combined repository needs to be defined in the R profile. 
+* Publishing to RStudio Connect is possible for any of the described uses of RSPM 
